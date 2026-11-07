@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El misterio de la sala de finanzas</title>
+<style>
+:root{--bg:#f3eee3;--card:#fffdf8;--ink:#1d2433;--mut:#667085;--acc:#1f4e8c;--ok:#237a47;--bad:#b3392f;--line:#d8cfbd;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1420;--card:#192135;--ink:#eef1f7;--mut:#9aa4b8;--acc:#7fb0ff;--ok:#5fd08a;--bad:#ff8277;--line:#2b3650;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1420;--card:#192135;--ink:#eef1f7;--mut:#9aa4b8;--acc:#7fb0ff;--ok:#5fd08a;--bad:#ff8277;--line:#2b3650;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,"Times New Roman",serif;min-height:100vh}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:640px;margin:0 auto;padding:18px 14px 40px}
+h1,h2{margin:.2em 0;line-height:1.2}
+.mut{color:var(--mut);margin:.3em 0 1em}
+.tag{font:600 12px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 6px 24px rgba(0,0,0,.08)}
+.seals{display:flex;gap:8px;justify-content:center;margin-bottom:14px}
+.sl{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:2px solid var(--line);font-size:16px}
+.sl.on{border-color:var(--ok);color:var(--ok);font-weight:700}
+.btn{font:600 15px system-ui,sans-serif;background:var(--acc);color:var(--bg);border:0;border-radius:10px;padding:11px 18px;cursor:pointer;margin-top:12px}
+.btn.g{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.it{display:block;width:100%;text-align:left;background:var(--bg);color:var(--ink);border:2px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:9px;font:14px/1.4 system-ui,sans-serif;cursor:pointer}
+.it.sel{border-color:var(--acc);box-shadow:0 0 0 3px rgba(31,78,140,.25)}
+.p0{border-color:#1f78d1}.p1{border-color:#d97a00}.p2{border-color:#2e9b5a}.p3{border-color:#9b3fc4}.p4{border-color:#d6336c}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:44px;position:relative}
+#ln{position:absolute;inset:0;pointer-events:none;overflow:visible}
+table{width:100%;border-collapse:collapse;font:14px system-ui,sans-serif}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left}
+td.n,th.n{text-align:right}
+.scroll{overflow-x:auto}
+input[type=text],input[type=range]{font:16px system-ui,sans-serif}
+input[type=text]{width:140px;padding:9px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input[type=range]{width:100%}
+.fb{margin-top:12px;padding:10px 12px;border-radius:10px;font:14px system-ui,sans-serif}
+.fb.ok{background:rgba(46,155,90,.15);color:var(--ok)}.fb.no{background:rgba(200,60,50,.14);color:var(--bad)}
+.cz{font:700 18px ui-monospace,monospace;letter-spacing:.08em}
+.dec{font:600 14px system-ui,sans-serif;color:var(--acc)}
+.center{text-align:center}
+.env{position:relative;width:300px;height:200px;margin:190px auto 30px;cursor:pointer}
+.env>div{position:absolute}
+.back{inset:0;background:#c9a96a;border-radius:6px}
+.paper{left:15px;right:15px;top:10px;height:200px;background:#fffdf4;color:#1d2433;border-radius:6px;z-index:2;transition:transform 1s ease .5s;text-align:center;padding-top:34px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
+.paper h1{font-size:54px;color:#2b6cd4;margin:.1em 0}
+.front{inset:0;background:#dcbc7c;clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);z-index:3;border-radius:6px}
+.flap{left:0;right:0;top:0;height:115px;background:#b8944f;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .7s ease;z-index:4}
+.wax{left:128px;top:82px;width:44px;height:44px;border-radius:50%;background:#2b6cd4;color:#fff;display:grid;place-items:center;font-size:20px;z-index:5;transition:opacity .4s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.open .flap{transform:rotateX(180deg);z-index:1}
+.open .wax{opacity:0}
+.open .paper{transform:translateY(-175px)}
+.cf{position:fixed;top:-30px;font-size:24px;animation:fall 4s linear forwards;z-index:20;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+</style></head>
+<body><div class="wrap" id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const money=n=>"$"+n.toLocaleString("es-AR");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const S={r:-1,done:[0,0,0,0,0]};
+const COL=["#1f78d1","#d97a00","#2e9b5a","#9b3fc4","#d6336c"];
+
+// Sala 1
+const F=[{n:"F-101",p:"Lácteos del Sur",a:12500},{n:"F-102",p:"Limpieza Total",a:8200},{n:"F-103",p:"Lavandería Palermo",a:15750},{n:"F-104",p:"Bebidas del Plata",a:23400},{n:"F-105",p:"Seguridad Ñandú",a:31800}];
+const B=shuffle([{t:"TRANSF. LDS S.A.",a:12500},{t:"TRANSF. LIMPTOTAL",a:8200},{t:"TRANSF. LAV PALERMO",a:15750},{t:"TRANSF. B. PLATA",a:23400},{t:"TRANSF. SEG. ÑANDU",a:31800},{t:"TRANSF. LDS S.A.",a:12050},{t:"DÉB. MANT. CUENTA",a:3200}]);
+let R1={sel:null,pairs:{}};
+function r1(){
+ const fs=F.map((f,i)=>`<button class="it ${R1.sel===i?"sel":""} ${i in R1.pairs?"p"+i:""}" id="a${i}" onclick="r1a(${i})"><b>${f.n}</b> · ${f.p}<br>${money(f.a)}</button>`).join("");
+ const bs=B.map((b,j)=>{const k=Object.keys(R1.pairs).find(i=>R1.pairs[i]===j);return `<button class="it ${k!==undefined?"p"+k:""}" id="b${j}" onclick="r1b(${j})">${b.t}<br><b>${money(b.a)}</b></button>`}).join("");
+ return `<p class="tag">Facturas pagadas</p><div class="two" id="two"><svg id="ln"></svg><div>${fs}</div><div><p class="tag" style="margin:-22px 0 6px">Extracto bancario</p>${bs}</div></div><button class="btn" onclick="c1()">Conciliar</button>`;
+}
+function r1a(i){R1.sel=i;delete R1.pairs[i];render()}
+function r1b(j){if(R1.sel===null)return;for(const i in R1.pairs)if(R1.pairs[i]===j)delete R1.pairs[i];R1.pairs[R1.sel]=j;R1.sel=null;render()}
+function lines(){const s=$("#ln");if(!s)return;const c=$("#two").getBoundingClientRect();let h="";for(const i in R1.pairs){const a=$("#a"+i).getBoundingClientRect(),b=$("#b"+R1.pairs[i]).getBoundingClientRect();const x1=a.right-c.left,y1=a.top+a.height/2-c.top,x2=b.left-c.left,y2=b.top+b.height/2-c.top;h+=`<line x1="${x1}" y1="${y1}" x2="${x2-6}" y2="${y2}" stroke="${COL[i]}" stroke-width="3"/><polygon points="${x2},${y2} ${x2-10},${y2-6} ${x2-10},${y2+6}" fill="${COL[i]}"/>`}s.innerHTML=h}
+function c1(){
+ if(Object.keys(R1.pairs).length<5)return fb(0,"Faltan facturas por unir con su movimiento del banco.");
+ const ok=F.every((f,i)=>B[R1.pairs[i]].a===f.a);
+ ok?fb(1,"¡Cuadra! Dos movimientos eran trampas: un importe casi igual al de Lácteos (diferencia de $450) y el débito de mantenimiento, que va a gastos bancarios. Primer sello."):fb(0,"Hay importes que no coinciden. Revisá los montos.");
+}
+
+// Sala 2
+const C=[["Lucía Fernández",45000,20000,25000],["Martín Gómez",38200,18200,18700],["Sofía Ramos",52000,30000,22000],["Carla Núñez",41500,12500,27500],["Diego Paz",29800,9800,20000],["Pablo Ibarra",33600,8600,24200]];
+const R2=new Set();
+function r2(){
+ return `<div class="scroll"><table><tr><th></th><th>Cajero</th><th class="n">Facturado</th><th class="n">Tarjeta</th><th class="n">Entregó</th></tr>${C.map((c,i)=>`<tr><td><input type="checkbox" onchange="tg(${i})"></td><td>${c[0]}</td><td class="n">${money(c[1])}</td><td class="n">${money(c[2])}</td><td class="n">${money(c[3])}</td></tr>`).join("")}</table></div><button class="btn" onclick="c2()">Acusar a los cajeros marcados</button>`;
+}
+function tg(i){R2.has(i)?R2.delete(i):R2.add(i)}
+function c2(){
+ const ok=R2.size===3&&[1,3,5].every(i=>R2.has(i));
+ ok?fb(1,"Exacto: Martín (−$1.300), Carla (−$1.500) y Pablo (−$800) entregaron menos efectivo del esperado. Segundo sello."):fb(0,R2.size!==3?"Pista: son exactamente 3 los cajeros con diferencia.":"Recordá: el efectivo esperado es Facturado menos Tarjeta. Alguno de los marcados cierra justo.");
+}
+
+// Sala 3
+function r3(){
+ return `<div class="scroll"><table><tr><th>Plato del día</th><th class="n">Costo</th></tr><tr><td>Carne</td><td class="n">$2.400</td></tr><tr><td>Guarnición</td><td class="n">$900</td></tr><tr><td>Salsa</td><td class="n">$600</td></tr><tr><td>Packaging</td><td class="n">$300</td></tr><tr><td>Mano de obra directa</td><td class="n">$1.200</td></tr><tr><td>Gastos indirectos asignados</td><td class="n">$600</td></tr><tr><td><b>Precio de venta (IVA 21% incluido)</b></td><td class="n"><b>$12.100</b></td></tr></table></div><p>¿Qué <b>margen bruto</b> (%) deja el plato sobre el precio neto de IVA?</p><input type="text" id="i3" inputmode="decimal" placeholder="Ej: 30"> <button class="btn" onclick="c3()">Probar</button>`;
+}
+function c3(){
+ const v=parseFloat($("#i3").value.replace(",","."));
+ v===40?fb(1,"Neto $10.000 (12.100 ÷ 1,21), costo total $6.000 → margen $4.000 → 40%. Tercer sello."):fb(0,"Ojo: el precio incluye IVA. Sacalo primero, sumá todos los costos (incluidos los indirectos) y dividí por el neto.");
+}
+
+// Sala 4
+const P=[["Distribuidora Norte","UVCPLTIYL"],["Insumos Pampa","HNVZAV"],["Gráfica Sur","THYGV"],["Seguros Atlas","QBUPV"]];
+const dec=(s,k)=>s.replace(/[A-Z]/g,c=>String.fromCharCode((c.charCodeAt(0)-65-k+26)%26+65));
+function r4(){
+ return `<p>Las facturas vencidas perdieron su fecha: quedó el mes de vencimiento (2026) encriptado. Hay que pagar primero la que lleva más tiempo vencida.</p>
+ <p class="mut">Pista: es un cifrado César, pero el desplazamiento no es el clásico. Probá con el deslizador hasta que aparezcan meses reales.</p>
+ <label class="tag">Desplazamiento: <span id="kv">0</span></label><input type="range" min="0" max="25" value="0" oninput="sk(this.value)">
+ <div class="scroll"><table>${P.map((p,i)=>`<tr><td>${p[0]}</td><td class="cz">${p[1]}</td><td class="dec" id="d${i}">${p[1]}</td><td><button class="btn g" style="margin:0;padding:6px 10px" onclick="c4(${i})">Pagar</button></td></tr>`).join("")}</table></div>`;
+}
+function sk(k){$("#kv").textContent=k;P.forEach((p,i)=>$("#d"+i).textContent=dec(p[1],+k))}
+function c4(i){
+ i===2?fb(1,"Gráfica Sur (marzo) es la más vencida. Cifrado César con desplazamiento 7. Cuarto sello."):fb(0,"Esa no es la más antigua. Decodificá todos los meses y comparalos.");
+}
+
+// Sala 5
+function r5(){
+ return `<p>Liquidación de tarjetas del día. El banco acreditó <b>$397.000</b>.</p><div class="scroll"><table><tr><th>Tarjeta</th><th class="n">Ventas</th><th class="n">Arancel</th></tr><tr><td>Visa</td><td class="n">$200.000</td><td class="n">2%</td></tr><tr><td>Mastercard</td><td class="n">$150.000</td><td class="n">3%</td></tr><tr><td>Cabal</td><td class="n">$60.000</td><td class="n">1,5%</td></tr></table></div><p>El arancel lleva además IVA 21%. Descontando arancel e IVA, ¿cuánto dinero <b>falta acreditar</b> (en $)?</p><input type="text" id="i5" inputmode="numeric" placeholder="$"> <button class="btn" onclick="c5()">Probar</button>`;
+}
+function c5(){
+ $("#i5").value.replace(/[^0-9]/g,"")==="1626"?fb(1,"Netos: Visa $195.160 + Mastercard $144.555 + Cabal $58.911 = $398.626. Faltan $1.626. ¡Último sello!"):fb(0,"Calculá el neto de cada tarjeta (ventas menos arancel menos IVA del arancel), sumalos y compará con lo acreditado.");
+}
+
+const ROOMS=[
+ {t:"La conciliación bancaria",s:"Toca una factura y luego su movimiento en el banco para unirlos con una flecha.",f:r1},
+ {t:"El faltante de caja",s:"Marcá a los cajeros que entregaron menos efectivo del que debían (facturado menos lo cobrado con tarjeta).",f:r2},
+ {t:"El costo escondido",s:"El plato estrella parece rentable… ¿lo es?",f:r3},
+ {t:"Proveedores en mora",s:"Alguien debe cobrar ya. Descifrá quién.",f:r4},
+ {t:"Cuentas corrientes",s:"Los vouchers de tarjeta no cierran con el banco.",f:r5}
+];
+function fb(ok,m){
+ if(ok)S.done[S.r]=1;
+ $("#fb").innerHTML=`<div class="fb ${ok?"ok":"no"}">${m}</div>`+(ok?`<button class="btn" onclick="nxt()">${S.r===4?"Ir a la caja fuerte":"Siguiente sala"} →</button>`:"");
+}
+function nxt(){S.r++;render();window.scrollTo(0,0)}
+function render(){
+ const app=$("#app");
+ if(S.r<0){app.innerHTML=`<div class="card center"><p class="tag">Misión</p><h1>El misterio de la sala de finanzas</h1><p class="mut">Una caja fuerte guarda un secreto. Para abrirla hay que resolver 5 salas de números, facturas y pistas. ¿Qué hay en el espacio de guardado?</p><button class="btn" onclick="nxt()">Entrar a la sala 1</button></div>`;return}
+ if(S.r>4){app.innerHTML=`<div class="center"><p class="tag">Caja fuerte abierta</p><h2>Había un sobre…</h2><p class="mut">Tocá el sello para abrirlo</p><div class="env" id="env" onclick="openEnv()"><div class="back"></div><div class="paper"><div>¡Es varón!</div><h1>Milo</h1><div style="font-size:28px">💙</div></div><div class="front"></div><div class="flap"></div><div class="wax">★</div></div><button class="btn g" onclick="location.reload()">Jugar de nuevo</button></div>`;return}
+ const R=ROOMS[S.r];
+ app.innerHTML=`<div class="seals">${S.done.map(d=>`<span class="sl ${d?"on":""}">${d?"✓":"🔒"}</span>`).join("")}</div><div class="card"><div class="tag">Sala ${S.r+1} de 5</div><h2>${R.t}</h2><p class="mut">${R.s}</p>${R.f()}<div id="fb"></div></div>`;
+ if(S.r===0)setTimeout(lines,0);
+}
+function openEnv(){
+ const e=$("#env");if(e.classList.contains("open"))return;
+ e.classList.add("open");
+ setTimeout(()=>{for(let i=0;i<28;i++){const s=document.createElement("span");s.className="cf";s.textContent=["💙","🎉","✨","🍼"][i%4];s.style.left=Math.random()*95+"vw";s.style.animationDelay=Math.random()*1.5+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),6000)}},900);
+}
+addEventListener("resize",lines);
+render();
+</script></body></html>
